@@ -26,6 +26,9 @@
         "images": [
             {
                 "image": "/images/products/2.jpg"
+            },
+            {
+                "image": "/images/products/1.jpg"
             }
         ],
         "category": "Accessories",
