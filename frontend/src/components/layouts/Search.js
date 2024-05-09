@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 export default function Search(){
 
     const navigate=useNavigate();
-    const [keyword, setKeyword]=useState("");
+    const location = useLocation();
+    const [keyword, setkeyword]=useState("");
 
     const searchHandler=(e)=>{
        e.preventDefault();
@@ -12,6 +13,15 @@ export default function Search(){
 
     }
 
+    const clearKeyword=()=>{
+      setkeyword("");
+    }
+
+    useEffect(()=>{
+      if(location.pathname==='/'){
+        clearKeyword();
+      }
+    },[location])
 
     return(
     <form onSubmit={searchHandler}>
@@ -21,7 +31,7 @@ export default function Search(){
             id="search_field"
             className="form-control"
             placeholder="Enter Product Name ..."
-            onChange={(e)=>{setKeyword(e.target.value)}}
+            onChange={(e)=>{setkeyword(e.target.value)}}
             value={keyword}
             />
           <div className="input-group-append">
