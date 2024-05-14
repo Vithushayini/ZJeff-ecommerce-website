@@ -19,6 +19,9 @@ import UpdateProfile from './components/user/UpdateProfile';
 import UpdatePassword from './components/user/UpdatePassword';
 import ForgotPassword from './components/user/ForgotPassword';
 import ResetPassword from './components/user/ResetPassword';
+import Cart from './components/cart/Cart';
+import Shipping from './components/cart/Shipping';
+import ConfirmOrder from './components/cart/ConfirmOrder';
 
 function App() {
 
@@ -41,9 +44,14 @@ function App() {
           <Route path='/register' element={<Register/>} />
           <Route path='/myprofile' element={<ProtectedRoute><Profile/></ProtectedRoute>} />
           <Route path='/myprofile/update' element={<ProtectedRoute><UpdateProfile/></ProtectedRoute>} />
+          
+          {/* path is different from sir */}
           <Route path='/password/change' element={<ProtectedRoute><UpdatePassword/></ProtectedRoute>} />
           <Route path='/password/forgot' element={<ForgotPassword/>} />
           <Route path='/password/reset/:token' element={<ResetPassword/>} />
+          <Route path='/cart' element={<Cart/>} />
+          <Route path='/shipping' element={<ProtectedRoute><Shipping/></ProtectedRoute>} />
+          <Route path='/order/confirm' element={<ProtectedRoute><ConfirmOrder/></ProtectedRoute>} />
         </Routes>
         </div>
           
