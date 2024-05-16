@@ -2,7 +2,7 @@ import MetaData from '../layouts/MetaData';
 import { Fragment, useEffect } from 'react';
 import { validateShipping } from './Shipping';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CheckoutSteps from './CheckoutStep';
 
 export default function ConfirmOrder(){
@@ -11,8 +11,20 @@ export default function ConfirmOrder(){
     const navigate = useNavigate();
     const itemsPrice= cartItems.reduce((acc,item)=>(acc + item.price * item.quantity),0);
     const shippingPrice= itemsPrice >200? 0:25;
-    const taxPrice= Number(0.05 * itemsPrice).toFixed(2);
-    const totalPrice= Number(itemsPrice+ shippingPrice+ taxPrice).toFixed(2);
+    let taxPrice= Number(0.05 * itemsPrice);
+    let totalPrice= Number(itemsPrice+ shippingPrice+ taxPrice).toFixed(2);
+    taxPrice=Number(taxPrice).toFixed(2);
+
+    const processPayment=()=>{
+        const data={
+            itemsPrice,
+            shippingPrice,
+            taxPrice,
+            totalPrice
+        }
+        sessionStorage.setItem('orderInfo',JSON.stringify(data))
+        navigate('/payment');
+    }
 
     useEffect(()=>{
         validateShipping(shippingInfo,navigate);
@@ -42,12 +54,12 @@ export default function ConfirmOrder(){
                                 </div>
 
                                 <div className="col-5 col-lg-6">
-                                    <a href="ghj">OPPO F21s Pro 5G (Dawnlight Gold, 8GB RAM, 128 Storage) with No Cost EMI/Additional Exchange Offers</a>
+                                    <Link to={`/product/${item.product}`}>{item.name}</Link>
                                 </div>
 
 
                                 <div className="col-4 col-lg-4 mt-4 mt-lg-0">
-                                    <p>1 x $245.67 = <b>$245.67</b></p>
+                                    <p>{item.quantity} x ${item.price} = <b>${item.quantity * item.price}</b></p>
                                 </div>
 
                             </div>
@@ -64,16 +76,16 @@ export default function ConfirmOrder(){
                 <div id="order_summary">
                     <h4>Order Summary</h4>
                     <hr />
-                    <p>Subtotal:  <span className="order-summary-values">$245.67</span></p>
-                    <p>Shipping: <span className="order-summary-values">$10</span></p>
-                    <p>Tax:  <span className="order-summary-values">$0</span></p>
+                    <p>Subtotal:  <span className="order-summary-values">${itemsPrice}</span></p>
+                    <p>Shipping: <span className="order-summary-values">${shippingPrice}</span></p>
+                    <p>Tax:  <span className="order-summary-values">${taxPrice}</span></p>
 
                     <hr />
 
-                    <p>Total: <span className="order-summary-values">$255.67</span></p>
+                    <p>Total: <span className="order-summary-values">${totalPrice}</span></p>
 
                     <hr />
-                    <button id="checkout_btn" className="btn btn-primary btn-block">Proceed to Payment</button>
+                    <button id="checkout_btn" onClick={processPayment} className="btn btn-primary btn-block">Proceed to Payment</button>
                 </div>
             </div>
         
