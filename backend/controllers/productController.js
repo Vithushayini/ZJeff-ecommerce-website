@@ -43,7 +43,7 @@ exports.newProduct=catchAsyncError(async (req,res,next)=>{
 
 //Get Single Product-{{base_url}}/api/v1/product/:id
 exports.getSingleProduct=catchAsyncError(async (req,res,next)=>{
-    const product=await Product.findById(req.params.id);
+    const product=await Product.findById(req.params.id).populate('reviews.user', 'name email');
 
     if(!product){
      return next(new ErrorHandler('product not found vithu',400));
