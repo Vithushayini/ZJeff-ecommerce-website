@@ -6,7 +6,8 @@ const productSlice = createSlice({
         loading:false,
         product:{},
         isReviewSubmitted:false,
-        isProductCreated:false
+        isProductCreated:false,
+        isProductDeleted:false
     },
     reducers:{
         productRequest(state,action){
@@ -67,13 +68,13 @@ const productSlice = createSlice({
                 product:{}
             }
         },
-        NewProductRequest(state,action){
+        newProductRequest(state,action){
             return{
                 ...state,
                 loading:true
             }
         },
-        NewProductSuccess(state,action){
+        newProductSuccess(state,action){
             return{
                 ...state,
                 loading:false,
@@ -81,7 +82,7 @@ const productSlice = createSlice({
                 product:action.payload.product
             }
         },
-        NewProductFail(state,action){
+        newProductFail(state,action){
             return{
                 ...state,
                 loading:false,
@@ -92,6 +93,32 @@ const productSlice = createSlice({
             return{
                 ...state,
                 isProductCreated:false
+            }
+        },
+        deleteProductRequest(state,action){
+            return{
+                ...state,
+                loading:true
+            }
+        },
+        deleteProductSuccess(state,action){
+            return{
+                ...state,
+                loading:false,
+                isProductDeleted:true
+            }
+        },
+        deleteProductFail(state,action){
+            return{
+                ...state,
+                loading:false,
+                error:action.payload
+            }
+        },
+        clearProductDeleted(state,action){
+            return{
+                ...state,
+                isProductDeleted:false
             }
         }
 
@@ -110,10 +137,14 @@ export const {
     clearError,
     clearReviewSubmitted,
     clearProduct,
-    NewProductSuccess,
-    NewProductRequest,
-    NewProductFail,
-    clearProductCreated
+    newProductSuccess,
+    newProductRequest,
+    newProductFail,
+    clearProductCreated,
+    deleteProductFail,
+    deleteProductRequest,
+    deleteProductSuccess,
+    clearProductDeleted
 }=actions;
 
 export default reducer;
