@@ -1,44 +1,47 @@
 import { Fragment, useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import { useDispatch, useSelector} from 'react-redux';
-import { useNavigate } from "react-router-dom";
-import { createNewProduct } from "../../actions/productActions";
+import { useNavigate, useParams } from "react-router-dom";
+import { getProduct, updateProduct } from "../../actions/productActions";
 import { toast } from "react-toastify";
-import { clearError, clearProductCreated } from "../../slices/productSlice";
+import { clearError, clearProductUpdated } from "../../slices/productSlice";
+
+export default function UpdateProduct(){
+
+    const [name,setName]=useState("");
+    const [price,setPrice]=useState("");
+    const [description,setDescription]=useState("");
+    const [category,setCategory]=useState("");
+    const [stock,setStock]=useState(0);
+    const [seller,setSeller]=useState("");
+    const [images,setImages]=useState([]);
+    const [imagesCleared,setImagesCleared]=useState(false);
+    const [imagesPreview,setImagesPreview]=useState([]);
+
+    const {loading, isProductUpdated, error, product}=useSelector(state=>state.productState);
+    const {id:productId}= useParams();
 
 
-export default function NewProduct(){
-  const [name,setName]=useState("");
-  const [price,setPrice]=useState("");
-  const [description,setDescription]=useState("");
-  const [category,setCategory]=useState("");
-  const [stock,setStock]=useState(0);
-  const [seller,setSeller]=useState("");
-  const [images,setImages]=useState([]);
-  const [imagesPreview,setImagesPreview]=useState([]);
+    const categories = [
+        'Electronics',
+        'Mobile Phones',
+        'Laptops',
+        'Accessories',
+        'Headphones',
+        'Food',
+        'Books',
+        'Clothes/Shoes',
+        'Beauty/Health',
+        'Sports',
+        'Outdoor',
+        'Home'
+    ];
 
-  const {loading, isProductCreated, error}=useSelector(state=>state.productState)
+    const navigate= useNavigate();
+    const dispatch= useDispatch();
 
-  const categories = [
-    'Electronics',
-    'Mobile Phones',
-    'Laptops',
-    'Accessories',
-    'Headphones',
-    'Food',
-    'Books',
-    'Clothes/Shoes',
-    'Beauty/Health',
-    'Sports',
-    'Outdoor',
-    'Home'
-];
-
-const navigate= useNavigate();
-const dispatch= useDispatch();
-
-const onImagesChange=(e)=>{
-  const files = Array.from(e.target.files);
+   const onImagesChange=(e)=>{
+   const files = Array.from(e.target.files);
 
         files.forEach(file => {
             
@@ -64,20 +67,28 @@ const onImagesChange=(e)=>{
         formData.append('description' , description);
         formData.append('seller' , seller);
         formData.append('category' , category);
+        formData.append('imagesCleared' , imagesCleared);
         images.forEach (image => {
             formData.append('images', image)
         })
-        dispatch(createNewProduct(formData))
+        dispatch(updateProduct(productId,formData))
    }
 
+   const clearImagesHandler =()=>{
+    setImages([]);
+    setImagesPreview([]);
+    setImagesCleared(true);
+   } 
+   
+
    useEffect(()=>{
-      if(isProductCreated){
-        toast('Product Created Successfully',{
+      if(isProductUpdated){
+        toast('Product Updated Successfully',{
           type:'success',
           position:"bottom-center",
-          onOpen:()=>dispatch(clearProductCreated())
+          onOpen:()=>dispatch(clearProductUpdated())
       })
-      navigate('/admin/products');
+      setImages([]);
       return;
       }
       if(error){
@@ -89,7 +100,26 @@ const onImagesChange=(e)=>{
         return
     }
 
-   },[dispatch,isProductCreated,error])
+    dispatch(getProduct(productId));
+
+   },[dispatch,isProductUpdated,error])
+
+   useEffect(()=>{
+        if(product._id){
+            setName(product.name);
+            setPrice(product.price);
+            setStock(product.stock);
+            setDescription(product.description);
+            setSeller(product.seller);
+            setCategory(product.category);
+            
+            let images = [];
+            product.images.forEach( image => {
+                images.push(image.image)
+            });
+            setImagesPreview(images)
+        }
+   },[product])
 
     return(
         <div className="row">
@@ -100,7 +130,7 @@ const onImagesChange=(e)=>{
               <Fragment>
                 <div className="wrapper my-5"> 
           <form onSubmit={submitHandler} className="shadow-lg" encType='multipart/form-data'>
-            <h1 className="mb-4">New Product</h1>
+            <h1 className="mb-4">Update Product</h1>
 
             <div className="form-group">
               <label htmlFor="name_field">Name</label>
@@ -183,6 +213,7 @@ const onImagesChange=(e)=>{
                             Choose Images
                         </label>
                     </div>
+                    {imagesPreview.length >0 && <span className="mr-2" onClick={clearImagesHandler} style={{cursor:"pointer"}}><i className="fa fa-trash"></i></span>}
                     {imagesPreview.map(image=>(
                       <img
                         className="mt-3 mr-2"
@@ -202,7 +233,7 @@ const onImagesChange=(e)=>{
               disabled={loading}
               className="btn btn-block py-3"
             >
-              CREATE
+              UPDATE
             </button>
 
           </form>
@@ -214,4 +245,5 @@ const onImagesChange=(e)=>{
         
         
     )
+
 }
