@@ -117,7 +117,8 @@ export default function UpdateProduct(){
             product.images.forEach( image => {
                 images.push(image.image)
             });
-            setImagesPreview(images)
+            setImagesPreview(images);
+            setImages(images);
         }
    },[product])
 
